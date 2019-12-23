@@ -21,6 +21,7 @@
 .idea/misc.xml
 .idea/compiler.xml
 .idea/kotlinc.xml
+.idea/checkstyle-idea.xml
 .idea/codeStyles/codeStyleConfig.xml
 .idea/codeStyles/Project.xml
 
