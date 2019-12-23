@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "it.unibo"
-version = "0.1.3"
+version = "0.1.0"
 
 repositories { mavenCentral() }
 
