@@ -1,6 +1,43 @@
 # Compiled class file
 *.class
 
+# IntelliJ build file, recursively for submodules
+**/out/
+**/build/
+
+# User-specific stuff
+.idea/.name
+.idea/libraries/
+.idea/modules/
+.idea/modules.xml
+.idea/scala_compiler.xml
+.idea/tasks.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/sbt.xml
+.idea/hydra.xml
+.idea_modules/
+.idea/dictionaries
+.idea/misc.xml
+.idea/compiler.xml
+.idea/kotlinc.xml
+.idea/codeStyles/codeStyleConfig.xml
+.idea/codeStyles/Project.xml
+
+# Sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+
+# Gradle
+.idea/**/gradle.xml
+.idea/**/libraries
+.gradle/
+
+
 # Log file
 *.log
 
