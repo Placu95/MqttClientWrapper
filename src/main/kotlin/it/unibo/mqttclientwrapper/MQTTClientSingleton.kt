@@ -25,6 +25,14 @@ object MQTTClientSingleton {
             return clientBasicApi!!
         }
 
+    @JvmStatic fun destruct() {
+        clientBasicApi?.let {
+            it.disconnect()
+            it.close()
+        }
+        clientBasicApi = null
+    }
+
     class ClientBuilder {
 
         private val gsonBuilder = GsonBuilder()
@@ -109,7 +117,7 @@ object MQTTClientSingleton {
          * @return the MQTT client
          */
         fun build(type: MqttClientType): MqttClientBasicApi {
-            if (clientBasicApi == null) {
+            if (clientBasicApi != null) {
                 throw IllegalStateException("singleton instance already created")
             }
             clientBasicApi = when(type) {
