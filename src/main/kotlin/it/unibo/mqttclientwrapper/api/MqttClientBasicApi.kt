@@ -1,8 +1,8 @@
 package it.unibo.mqttclientwrapper.api
 
 import com.google.gson.*
-import java.lang.UnsupportedOperationException
 import java.lang.reflect.Type
+import java.util.function.BiConsumer
 
 /**
  * Interface with basic API for a iot.mqtt client
@@ -45,6 +45,22 @@ interface MqttClientBasicApi {
         classMessage: Class<T>,
         messageConsumer: (topic: String, message: T) -> Unit
     )
+
+    /**
+     * For Java interoperability to avoid to return Unit.INSTANCE
+     * Subscribe to all the topic that start with topicFilter
+     * @param subscriber instance oh the subscriber
+     * @param topicFilter the topic filter with support to the wildcard '+' and '#'
+     * @param classMessage the class of the message that will be receive
+     * @param messageConsumer consumer for the message already converted to the required class
+     * @param <T> Type of the received message on this topic
+    </T> */
+    fun <T : MqttMessageType> subscribe(
+        subscriber: Any,
+        topicFilter: String,
+        classMessage: Class<T>,
+        messageConsumer: BiConsumer<String, T>
+    ) = subscribe(subscriber, topicFilter, classMessage) {topic: String, message: T ->  messageConsumer.accept(topic, message)}
 
     /**
      * Unsubscribe a topic previous subscribed
