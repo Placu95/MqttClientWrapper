@@ -10,8 +10,7 @@ import java.lang.reflect.Type
  */
 class MqttMock : MqttClientBasicApi {
     private val subscribed: MutableMap<String, MutableList<MqttMessageConsumer<*>>> = HashMap()
-    private val broker: MqttBrokerMock =
-        MqttBrokerMock.instance
+    private val broker: MqttBrokerMock = MqttBrokerMock.instance
 
     init {
         connect()
@@ -32,23 +31,13 @@ class MqttMock : MqttClientBasicApi {
         broker.publish(topic, message)
     }
 
-    override fun <T : MqttMessageType> subscribe(
-        subscriber: Any,
-        topicFilter: String,
-        classMessage: Class<T>,
-        messageConsumer: (topic: String, message: T) -> Unit
-    ) {
+    override fun <T : MqttMessageType> subscribe(subscriber: Any, topicFilter: String, classMessage: Class<T>,
+                                                 messageConsumer: (topic: String, message: T) -> Unit) {
         if (!subscribed.containsKey(topicFilter)) {
             broker.subscribe(this, topicFilter)
             subscribed[topicFilter] = mutableListOf()
         }
-        subscribed[topicFilter]!!.add(
-            MqttMessageConsumer(
-                subscriber,
-                messageConsumer,
-                classMessage
-            )
-        )
+        subscribed[topicFilter]!!.add(MqttMessageConsumer(subscriber, messageConsumer, classMessage))
     }
 
     override fun unsubscribe(subscriber: Any, topicFilter: String) {
@@ -59,19 +48,19 @@ class MqttMock : MqttClientBasicApi {
         }
     }
 
-    override fun <T> addSerializer(clazz: Class<T>, serializer: JsonSerializer<T>): MqttClientBasicApi = throwUnsupported()
+    override fun <T> addSerializer(clazz: Class<T>, serializer: JsonSerializer<T>): MqttClientBasicApi = printUselessFunction()
 
     override fun <T> addSerializer(clazz: Class<T>, serializer: (T, Type, JsonSerializationContext) -> JsonElement
-        ): MqttClientBasicApi = throwUnsupported()
+        ): MqttClientBasicApi = printUselessFunction()
 
-    override fun <T> addDeserializer(clazz: Class<T>, deserializer: JsonDeserializer<T>): MqttClientBasicApi = throwUnsupported()
+    override fun <T> addDeserializer(clazz: Class<T>, deserializer: JsonDeserializer<T>): MqttClientBasicApi = printUselessFunction()
 
     override fun <T> addDeserializer(clazz: Class<T>, deserializer: (JsonElement, Type, JsonDeserializationContext) -> T
-        ): MqttClientBasicApi = throwUnsupported()
+        ): MqttClientBasicApi = printUselessFunction()
 
-    @Throws(UnsupportedOperationException::class)
-    private fun throwUnsupported(): MqttMock {
-        throw UnsupportedOperationException("Operation not supported from mock implementation")
+    private fun printUselessFunction(): MqttMock {
+        System.err.println("This function in mock implementation don't do nothing")
+        return this
     }
 
     /**
