@@ -122,7 +122,19 @@ object MQTTClientSingleton {
             }
             clientBasicApi = when(type) {
                 MqttClientType.MOCK -> MqttMock()
-                MqttClientType.PAHO -> PahoMqttClient()
+                MqttClientType.PAHO -> {
+                    when {
+                        address == null -> {
+                            PahoMqttClient(gson = gsonBuilder.create())
+                        }
+                        clientId != null -> {
+                            PahoMqttClient(address!!, clientId!!, gsonBuilder.create())
+                        }
+                        else -> {
+                            throw java.lang.IllegalStateException("Missing client id")
+                        }
+                    }
+                }
             }
             return clientBasicApi!!
         }
