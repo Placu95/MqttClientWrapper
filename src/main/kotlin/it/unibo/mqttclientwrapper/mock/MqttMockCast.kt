@@ -8,7 +8,7 @@ import java.lang.reflect.Type
 /**
  * Mock implementation of a [MqttClientBasicApi] based on cast of [MqttMessageType]
  */
-class MqttMock : MqttClientBasicApi {
+class MqttMockCast : MqttClientBasicApi {
     private val subscribed: MutableMap<String, MutableList<MqttMessageConsumer<*>>> = HashMap()
     private val broker: MqttBrokerMock = MqttBrokerMock.instance
 
@@ -58,7 +58,7 @@ class MqttMock : MqttClientBasicApi {
     override fun <T> addDeserializer(clazz: Class<T>, deserializer: (JsonElement, Type, JsonDeserializationContext) -> T
         ): MqttClientBasicApi = printUselessFunction()
 
-    private fun printUselessFunction(): MqttMock {
+    private fun printUselessFunction(): MqttMockCast {
         System.err.println("This function in mock implementation don't do nothing")
         return this
     }

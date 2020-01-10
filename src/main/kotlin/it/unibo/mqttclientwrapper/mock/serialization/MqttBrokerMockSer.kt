@@ -1,19 +1,18 @@
-package it.unibo.mqttclientwrapper.mock
+package it.unibo.mqttclientwrapper.mock.serialization
 
-import it.unibo.mqttclientwrapper.api.MqttMessageType
 import it.unibo.mqttclientwrapper.api.MqttTopicConst
 
 /**
  * Mock that represent a iot.mqtt broker
  */
-class MqttBrokerMock private constructor() {
-    private val clientSubscribed: MutableMap<MqttMockCast, MutableList<String>>
+class MqttBrokerMockSer private constructor() {
+    private val clientSubscribed: MutableMap<MqttMockSer, MutableList<String>>
 
     companion object {
         /**
          * @return the singleton instance
          */
-        val instance = MqttBrokerMock()
+        val instance = MqttBrokerMockSer()
     }
 
     init {
@@ -21,19 +20,19 @@ class MqttBrokerMock private constructor() {
     }
 
     /**
-     * Method to connect a [MqttMockCast] to this broker
+     * Method to connect a [MqttMockSer] to this broker
      * @param instance the client
      */
-    fun connect(instance: MqttMockCast) {
+    fun connect(instance: MqttMockSer) {
         check(!clientSubscribed.containsKey(instance))
         clientSubscribed[instance] = mutableListOf()
     }
 
     /**
-     * Method to disconnect a [MqttMockCast] to this broker
+     * Method to disconnect a [MqttMockSer] to this broker
      * @param instance the client
      */
-    fun disconnect(instance: MqttMockCast) {
+    fun disconnect(instance: MqttMockSer) {
         check(clientSubscribed.containsKey(instance))
         clientSubscribed.remove(instance)
     }
@@ -43,7 +42,7 @@ class MqttBrokerMock private constructor() {
      * @param topic the topic of the message
      * @param message the message to publish
      */
-    fun publish(topic: String, message: MqttMessageType) {
+    fun publish(topic: String, message: String) {
         clientSubscribed.entries.map {
                 Pair(
                     it.key,
@@ -54,21 +53,21 @@ class MqttBrokerMock private constructor() {
     }
 
     /**
-     * method to subscribe a [MqttMockCast] to a topic
+     * method to subscribe a [MqttMockSer] to a topic
      * @param instance the client
      * @param topicFilter the topic with possible wildcard
      */
-    fun subscribe(instance: MqttMockCast, topicFilter: String) {
+    fun subscribe(instance: MqttMockSer, topicFilter: String) {
         check(clientSubscribed.containsKey(instance))
         clientSubscribed[instance]!!.add(topicFilter)
     }
 
     /**
-     * method to unsubscribe a [MqttMockCast] to a previous subscribed topic
+     * method to unsubscribe a [MqttMockSer] to a previous subscribed topic
      * @param instance the client
      * @param topicFilter the topic previous subscribed
      */
-    fun unsubscribe(instance: MqttMockCast, topicFilter: String) {
+    fun unsubscribe(instance: MqttMockSer, topicFilter: String) {
         check(clientSubscribed.containsKey(instance))
         clientSubscribed[instance]!!.remove(topicFilter)
     }

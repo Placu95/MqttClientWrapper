@@ -2,7 +2,8 @@ package it.unibo.mqttclientwrapper
 
 import com.google.gson.*
 import it.unibo.mqttclientwrapper.api.MqttClientBasicApi
-import it.unibo.mqttclientwrapper.mock.MqttMock
+import it.unibo.mqttclientwrapper.mock.MqttMockCast
+import it.unibo.mqttclientwrapper.mock.serialization.MqttMockSer
 import it.unibo.mqttclientwrapper.paho.PahoMqttClient
 import java.lang.reflect.Type
 
@@ -121,7 +122,8 @@ object MQTTClientSingleton {
                 throw IllegalStateException("singleton instance already created")
             }
             clientBasicApi = when(type) {
-                MqttClientType.MOCK -> MqttMock()
+                MqttClientType.MOCK_CAST -> MqttMockCast()
+                MqttClientType.MOCK_SERIALIZATION -> MqttMockSer(gsonBuilder.create())
                 MqttClientType.PAHO -> {
                     when {
                         address == null -> {
