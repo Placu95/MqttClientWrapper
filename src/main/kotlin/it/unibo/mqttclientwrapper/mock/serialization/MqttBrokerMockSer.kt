@@ -6,7 +6,8 @@ import it.unibo.mqttclientwrapper.api.MqttTopicConst
  * Mock that represent a iot.mqtt broker
  */
 class MqttBrokerMockSer private constructor() {
-    private val clientSubscribed: MutableMap<MqttMockSer, MutableList<String>>
+    private val clientSubscribed: MutableSet<MqttMockSer> = mutableSetOf()
+    private val subscription: MutableMap<String, MutableSet<MqttMockSer>> = mutableMapOf()
 
     companion object {
         /**
@@ -15,17 +16,13 @@ class MqttBrokerMockSer private constructor() {
         val instance = MqttBrokerMockSer()
     }
 
-    init {
-        clientSubscribed = HashMap()
-    }
-
     /**
      * Method to connect a [MqttMockSer] to this broker
      * @param instance the client
      */
     fun connect(instance: MqttMockSer) {
-        check(!clientSubscribed.containsKey(instance))
-        clientSubscribed[instance] = mutableListOf()
+        check(!clientSubscribed.contains(instance))
+        clientSubscribed.add(instance)
     }
 
     /**
@@ -33,7 +30,7 @@ class MqttBrokerMockSer private constructor() {
      * @param instance the client
      */
     fun disconnect(instance: MqttMockSer) {
-        check(clientSubscribed.containsKey(instance))
+        check(clientSubscribed.contains(instance))
         clientSubscribed.remove(instance)
     }
 
@@ -43,13 +40,8 @@ class MqttBrokerMockSer private constructor() {
      * @param message the message to publish
      */
     fun publish(topic: String, message: String) {
-        clientSubscribed.entries.map {
-                Pair(
-                    it.key,
-                    it.value.filter { f -> checkTopicMatch(topic, f) }.toList()
-                )
-            }
-            .forEach { it.second.forEach { t -> it.first.dispatch(t, topic, message) } }
+        subscription.filterKeys { checkTopicMatch(topic, it) }
+            .forEach { it.value.forEach { c -> c.dispatch(it.key, topic, message) } }
     }
 
     /**
@@ -58,8 +50,8 @@ class MqttBrokerMockSer private constructor() {
      * @param topicFilter the topic with possible wildcard
      */
     fun subscribe(instance: MqttMockSer, topicFilter: String) {
-        check(clientSubscribed.containsKey(instance))
-        clientSubscribed[instance]!!.add(topicFilter)
+        check(clientSubscribed.contains(instance))
+        subscription.getOrPut(topicFilter) { mutableSetOf() }.add(instance)
     }
 
     /**
@@ -68,20 +60,26 @@ class MqttBrokerMockSer private constructor() {
      * @param topicFilter the topic previous subscribed
      */
     fun unsubscribe(instance: MqttMockSer, topicFilter: String) {
-        check(clientSubscribed.containsKey(instance))
-        clientSubscribed[instance]!!.remove(topicFilter)
+        check(clientSubscribed.contains(instance))
+        check(subscription.containsKey(topicFilter))
+        subscription[topicFilter]?.remove(instance)
     }
 
     private fun checkTopicMatch(topic: String, filter: String): Boolean {
-        val topicSplitted = topic.split(MqttTopicConst.LEVEL_SEPARATOR).toTypedArray()
-        val filterSplitted = filter.split(MqttTopicConst.LEVEL_SEPARATOR).toTypedArray()
-        var index = 0
-        while (index < topicSplitted.size && index < filterSplitted.size &&
-            (topicSplitted[index] == filterSplitted[index] || filterSplitted[index] == MqttTopicConst.WILDCARD_SINGLE_LEVEL)) {
-
-            index++
+        if (topic == filter) {
+            return true
         }
-        return index == filterSplitted.size && index == topicSplitted.size ||
-                index == filterSplitted.size - 1 && filterSplitted[index] == MqttTopicConst.WILDCARD_MULTI_LEVEL
+        var indexT = 0
+        var indexF = 0
+        while (indexF < filter.length && indexT < topic.length) {
+            when (filter[indexF]) {
+                topic[indexT] -> indexT++
+                MqttTopicConst.WILDCARD_SINGLE_LEVEL[0] -> indexT = topic.indexOf(MqttTopicConst.LEVEL_SEPARATOR, indexT)
+                MqttTopicConst.WILDCARD_MULTI_LEVEL[0] -> return indexF == filter.length - 1
+                else -> return false
+            }
+            indexF++
+        }
+        return indexT == topic.length && indexF == filter.length
     }
 }
