@@ -65,7 +65,7 @@ class MqttMockCast : MqttClientBasicApi {
         ): MqttClientBasicApi = printUselessFunction()
 
     private fun printUselessFunction(): MqttMockCast {
-        System.err.println("This function in mock implementation don't do nothing")
+        println("[INFO] This function in mock implementation don't do nothing")
         return this
     }
 
