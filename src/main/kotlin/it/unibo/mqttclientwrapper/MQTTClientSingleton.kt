@@ -2,7 +2,7 @@ package it.unibo.mqttclientwrapper
 
 import com.google.gson.*
 import it.unibo.mqttclientwrapper.api.MqttClientBasicApi
-import it.unibo.mqttclientwrapper.mock.MqttMockCast
+import it.unibo.mqttclientwrapper.mock.cast.MqttMockCast
 import it.unibo.mqttclientwrapper.mock.serialization.MqttMockSer
 import it.unibo.mqttclientwrapper.paho.PahoMqttClient
 import java.lang.reflect.Type

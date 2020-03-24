@@ -2,7 +2,6 @@ package it.unibo.mqttclientwrapper.paho
 
 import com.google.gson.*
 import it.unibo.mqttclientwrapper.api.MqttClientBasicApi
-import it.unibo.mqttclientwrapper.api.MqttMessageType
 import org.eclipse.paho.client.mqttv3.MqttClient
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions
 import org.eclipse.paho.client.mqttv3.MqttException
@@ -61,7 +60,7 @@ class PahoMqttClient @JvmOverloads constructor(
         }
     }
 
-    override fun publish(topic: String, message: MqttMessageType) {
+    override fun publish(topic: String, message: Any) {
         try {
             if (!mqttClient.isConnected) {
                 connect()
@@ -72,7 +71,7 @@ class PahoMqttClient @JvmOverloads constructor(
         }
     }
 
-    override fun <T : MqttMessageType> subscribe(
+    override fun <T> subscribe(
         subscriber: Any,
         topicFilter: String,
         classMessage: Class<T>,
@@ -132,7 +131,7 @@ class PahoMqttClient @JvmOverloads constructor(
     private inner class MqttMessageConsumer<T>(
         val subscriber: Any,
         private val consumer: (topic: String, message: T) -> Unit,
-        private val clazz: Class<T>) where T : MqttMessageType {
+        private val clazz: Class<T>) {
 
         fun accept(t: String, message: String) {
             consumer.invoke(t, gson.fromJson(message, clazz))

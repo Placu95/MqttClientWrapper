@@ -1,6 +1,5 @@
-package it.unibo.mqttclientwrapper.mock
+package it.unibo.mqttclientwrapper.mock.cast
 
-import it.unibo.mqttclientwrapper.api.MqttMessageType
 import it.unibo.mqttclientwrapper.api.MqttTopicConst
 
 /**
@@ -40,7 +39,7 @@ class MqttBrokerMock private constructor() {
      * @param topic the topic of the message
      * @param message the message to publish
      */
-    fun publish(topic: String, message: MqttMessageType) {
+    fun publish(topic: String, message: Any) {
         subscription.filterKeys { checkTopicMatch(topic, it) }
             .forEach{ it.value.forEach { c -> c.dispatch(it.key, topic, message) } }
     }

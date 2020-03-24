@@ -29,11 +29,11 @@ class MqttMockSer @JvmOverloads constructor (
 
     override fun close() { }
 
-    override fun publish(topic: String, message: MqttMessageType) {
+    override fun publish(topic: String, message: Any) {
         broker.publish(topic, gson.toJson(message))
     }
 
-    override fun <T : MqttMessageType> subscribe(subscriber: Any, topicFilter: String, classMessage: Class<T>,
+    override fun <T> subscribe(subscriber: Any, topicFilter: String, classMessage: Class<T>,
                                                  messageConsumer: (topic: String, message: T) -> Unit) {
         if (!subscribed.containsKey(topicFilter)) {
             broker.subscribe(this, topicFilter)
@@ -92,7 +92,7 @@ class MqttMockSer @JvmOverloads constructor (
         val subscriber: Any,
         private val consumer: (topic: String, message: T) -> Unit,
         private val clazz: Class<T>,
-        private val gson: Gson) where T : MqttMessageType {
+        private val gson: Gson) {
 
         fun accept(t: String, message: String) {
             consumer.invoke(t, gson.fromJson(message, clazz))

@@ -29,7 +29,7 @@ interface MqttClientBasicApi {
      * @param topic the message topic
      * @param message the message
      */
-    fun publish(topic: String, message: MqttMessageType)
+    fun publish(topic: String, message: Any)
 
     /**
      * Subscribe to all the topic that start with topicFilter
@@ -39,7 +39,7 @@ interface MqttClientBasicApi {
      * @param messageConsumer consumer for the message already converted to the required class
      * @param <T> Type of the received message on this topic
     </T> */
-    fun <T : MqttMessageType> subscribe(
+    fun <T> subscribe(
         subscriber: Any,
         topicFilter: String,
         classMessage: Class<T>,
@@ -55,7 +55,7 @@ interface MqttClientBasicApi {
      * @param messageConsumer consumer for the message already converted to the required class
      * @param <T> Type of the received message on this topic
     </T> */
-    fun <T : MqttMessageType> subscribe(
+    fun <T> subscribe(
         subscriber: Any,
         topicFilter: String,
         classMessage: Class<T>,

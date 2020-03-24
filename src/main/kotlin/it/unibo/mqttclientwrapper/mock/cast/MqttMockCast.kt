@@ -1,4 +1,4 @@
-package it.unibo.mqttclientwrapper.mock
+package it.unibo.mqttclientwrapper.mock.cast
 
 import com.google.gson.*
 import it.unibo.mqttclientwrapper.api.MqttClientBasicApi
@@ -27,17 +27,23 @@ class MqttMockCast : MqttClientBasicApi {
 
     override fun close() { }
 
-    override fun publish(topic: String, message: MqttMessageType) {
+    override fun publish(topic: String, message: Any) {
         broker.publish(topic, message)
     }
 
-    override fun <T : MqttMessageType> subscribe(subscriber: Any, topicFilter: String, classMessage: Class<T>,
+    override fun <T> subscribe(subscriber: Any, topicFilter: String, classMessage: Class<T>,
                                                  messageConsumer: (topic: String, message: T) -> Unit) {
         if (!subscribed.containsKey(topicFilter)) {
             broker.subscribe(this, topicFilter)
             subscribed[topicFilter] = mutableListOf()
         }
-        subscribed[topicFilter]!!.add(MqttMessageConsumer(subscriber, messageConsumer, classMessage))
+        subscribed[topicFilter]!!.add(
+            MqttMessageConsumer(
+                subscriber,
+                messageConsumer,
+                classMessage
+            )
+        )
     }
 
     override fun unsubscribe(subscriber: Any, topicFilter: String) {
@@ -69,7 +75,7 @@ class MqttMockCast : MqttClientBasicApi {
      * @param topic the message topic
      * @param message the message
      */
-    fun dispatch(filter: String, topic: String, message: MqttMessageType) {
+    fun dispatch(filter: String, topic: String, message: Any) {
         if (subscribed.containsKey(filter)) {
             subscribed[filter]?.forEach { c: MqttMessageConsumer<*> -> c.accept(topic, message) }
         }
@@ -78,9 +84,9 @@ class MqttMockCast : MqttClientBasicApi {
     private class MqttMessageConsumer<T>(
         val subscriber: Any,
         private val consumer: (topic: String, message: T) -> Unit,
-        private val clazz: Class<T>) where T : MqttMessageType {
+        private val clazz: Class<T>) {
 
-        fun accept(t: String, message: MqttMessageType) {
+        fun accept(t: String, message: Any) {
             consumer.invoke(t, clazz.cast(message))
         }
     }
