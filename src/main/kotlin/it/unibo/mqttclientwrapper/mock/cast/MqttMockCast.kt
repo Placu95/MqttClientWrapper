@@ -8,7 +8,7 @@ import java.lang.reflect.Type
 /**
  * Mock implementation of a [MqttClientBasicApi] based on cast of [MqttMessageType]
  */
-class MqttMockCast : MqttClientBasicApi {
+open class MqttMockCast : MqttClientBasicApi {
     private val subscribed: MutableMap<String, MutableList<MqttMessageConsumer<*>>> = HashMap()
     private val broker: MqttBrokerMock = MqttBrokerMock.instance
 

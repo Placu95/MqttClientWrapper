@@ -8,8 +8,8 @@ import java.lang.reflect.Type
 /**
  * Mock implementation of a [MqttClientBasicApi] based on cast of [MqttMessageType]
  */
-class MqttMockSer @JvmOverloads constructor (
-    private var gson: Gson = GsonBuilder().create()
+open class MqttMockSer @JvmOverloads constructor (
+    protected var gson: Gson = GsonBuilder().create()
 ) : MqttClientBasicApi {
     private val subscribed: MutableMap<String, MutableList<MqttMessageConsumer<*>>> = HashMap()
     private val broker: MqttBrokerMockSer = MqttBrokerMockSer.instance

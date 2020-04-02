@@ -14,10 +14,10 @@ import java.util.concurrent.CopyOnWriteArrayList
 /**
  * [MqttClientBasicApi] for a real mqtt server. This implementation is based on the library Paho.
  */
-class PahoMqttClient @JvmOverloads constructor(
+open class PahoMqttClient @JvmOverloads constructor(
     address: String = "tcp://localhost:1883",
     clientId: String = "MqttClientWrapperLibrary",
-    private var gson: Gson = GsonBuilder().create()
+    protected var gson: Gson = GsonBuilder().create()
 ) :
     MqttClientBasicApi {
     private val mqttClient: MqttClient
